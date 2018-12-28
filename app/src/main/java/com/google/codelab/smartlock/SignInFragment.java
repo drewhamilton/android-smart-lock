@@ -14,6 +14,7 @@
 package com.google.codelab.smartlock;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
@@ -25,6 +26,10 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
+
+import com.google.android.gms.auth.api.credentials.Credential;
+import com.google.android.gms.auth.api.credentials.CredentialsOptions;
 
 public class SignInFragment extends Fragment {
 
@@ -37,7 +42,7 @@ public class SignInFragment extends Fragment {
     private ProgressBar mSignInProgressBar;
 
     @Override
-    public View onCreateView(LayoutInflater layoutInflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater layoutInflater, ViewGroup container, Bundle savedInstanceState) {
         View view = layoutInflater.inflate(R.layout.fragment_sign_in, container, false);
         mUsernameTextInputLayout = view.findViewById(R.id.usernameTextInputLayout);
         mPasswordTextInputLayout = view.findViewById(R.id.passwordTextInputLayout);
@@ -77,15 +82,18 @@ public class SignInFragment extends Fragment {
                 String username = mUsernameTextInputLayout.getEditText().getText().toString();
                 String password = mPasswordTextInputLayout.getEditText().getText().toString();
 
-
-                // ************ Replace with Smart Lock sign in *****************
-                if (CodelabUtil.isValidCredential(username, password)) {
-                    ((MainActivity) getActivity()).goToContent();
+                Credential credential = new Credential.Builder(username)
+                        .setPassword(password)
+                        .build();
+                if (CodelabUtil.isValidCredential(credential)) {
+                    ((MainActivity) getActivity()).saveCredential(credential);
                 } else {
-                    Log.d(TAG, "Credentials are invalid. Username or password are incorrect.");
+                    Log.d(TAG, "Credentials are invalid. Username or password are " +
+                            "incorrect.");
+                    Toast.makeText(view.getContext(), R.string.invalid_creds_toast_msg,
+                            Toast.LENGTH_SHORT).show();
                     setSignEnabled(true);
                 }
-                // **************** End Smart Lock sign in ***********************
             }
         });
 

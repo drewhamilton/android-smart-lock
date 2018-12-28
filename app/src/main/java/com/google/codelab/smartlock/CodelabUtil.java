@@ -13,6 +13,8 @@
  */
 package com.google.codelab.smartlock;
 
+import com.google.android.gms.auth.api.credentials.Credential;
+
 public class CodelabUtil {
 
     /**
@@ -27,11 +29,11 @@ public class CodelabUtil {
         return false;
     }
 
-    // ***************** Add isValidCredential overload here ********************
-
-    // TODO: Overload isValidCredential
-
-    // ******************* End isValidCredential overload ***********************
+    public static boolean isValidCredential(Credential credential) {
+        String username = credential.getId();
+        String password = credential.getPassword();
+        return isValidCredential(username, password);
+    }
 
     /**
      * Check if given username starts an existing username in the UsernamesAndPassword class.
